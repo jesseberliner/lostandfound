@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add an item</title>
+
+    <th:block th:replace="base :: head"></th:block>
+</head>
+<body>
+<th:block th:replace="base :: nav"></th:block>
+<div class="container">
+    <div class="row col-sm justify-content-center">
+        <form action="#" th:action="@{/addItem}" th:object="${item}" method="POST" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{itemId}"/>
+            <h1>Add or edit a lost item</h1>
+
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" th:field="*{itemName}" id="name" placeholder="Name" autofocus="autofocus"/>
+                <!--<span th:if="${#fields.hasErrors('itemTitle')}" th:errors="*{itemName}"></span>-->
+            <br/>
+
+            <label for="description">Description:</label>
+            <textarea rows="3" class="form-control" th:field="*{itemDescription}" id="description" placeholder="Description"/>
+                <!--<span th:if="${#fields.hasErrors('itemDesc')}" th:errors="*{itemDescription}"></span>-->
+            <br/>
+
+            <label for="itemFoundLocation">Where was the item found?</label>
+            <input type="text" class="form-control" th:field="*{itemFoundLocation}" id="itemFoundLocation" placeholder="Where found"/>
+                <!--<span th:if="${#fields.hasErrors('itemDesc')}" th:errors="*{itemDescription}"></span>-->
+            <br/>
+
+            <label for="itemFoundDate">Date found:</label>
+            <input type="text" class="form-control" th:field="*{itemFoundDate}" id="itemFoundDate" th:placeholder="*{itemFoundDate}"/>
+                <!--<span th:if="${#fields.hasErrors('itemDesc')}" th:errors="*{itemDescription}"></span>-->
+            <br/>
+
+            <label for="itemPicture1">Picture:</label>
+            <input type="file" name="file" class="form-control" id="itemPicture1" />
+            <br/>
+            <label for="itemPicture2">Picture:</label>
+            <input type="file" name="file2" class="form-control" id="itemPicture2" />
+            <br/>
+
+
+            <label for="itemLocation">Location of item:</label><br/>
+            <select id="itemLocation" name="itemLocation" th:field="*{itemLocation}">
+                <option th:value="'Please select...'" selected>Please select...</option>
+                <option th:value="'Village Square'" th:text="'Village Square'">Village Square</option>
+                <option th:value="'Montgomery Station'" th:text="'Montgomery Station'">Montgomery Station</option>
+                <option th:value="'Town Center'" th:text="'Town Center'">Town Center</option>
+                <option th:value="'Lakeside Commons'" th:text="'Lakeside Commons'">Lakeside Commons</option>
+                <option th:value="'Security Office'" th:text="'Security Office'">Security Office</option>
+                <option th:value="'General Services Office'" th:text="'General Services Office'">General Services Office</option>
+            </select>
+            <br/>
+
+            <button type="submit" class="btn btn-primary">Submit</button>  <button type="reset" class="btn btn-primary">Reset</button>
+        </form>
+    </div>
+</div>
+<th:block th:replace="base :: footer"></th:block>
+
+<th:block th:replace="base :: javascript"></th:block>
+</body>
+</html>

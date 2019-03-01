@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="base :: head"></th:block>
+    <title>Item added</title>
+</head>
+<body>
+<th:block th:replace="base :: nav"></th:block>
+<div class="container">
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <div class="card" th:object="${item}">
+                <img class="card-img-top" th:src="*{itemPicture1}" alt="No picture selected" />
+                <img class="card-img-top" th:src="*{itemPicture2}" alt="No picture selected" />
+                <div class="card-body">
+                    <div class="card-body">
+                        <h1 class="card-title -align-center" th:text="*{itemName}"></h1>
+                        <p class="card-text" th:text="*{itemDescription}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+
+</div>
+
+<th:block th:replace="base :: footer"></th:block>
+<th:block th:replace="base :: javascript"></th:block>
+
+</body>
+</html>

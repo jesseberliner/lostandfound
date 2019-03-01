@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<%@taglib uri="https://cloudinary.com/jsp/taglib" prefix="cl" %>
+<head>
+    <th:block th:replace="base :: head"></th:block>
+    <title>Lost and found</title>
+</head>
+<body>
+<th:block th:replace="base :: nav"></th:block>
+<div class="card h-100">
+    <img class="card-img-top" th:src="*{item.itemPicture1}" alt="No image found"> <img class="card-img-top" th:src="*{item.itemPicture2}" alt="No image found">
+
+    <div class="card-body">
+        <h4 class="card-title">
+            <a href="#"></a>
+        </h4>
+        <h5 th:text="'Found ' + ${item.itemFoundDate}"></h5>
+        <p class="card-text" th:text="${item.itemDescription}"></p>
+    </div>
+    <div class="card-footer">
+        <small class="text-muted"></small>
+    </div>
+</div>
+<th:block th:replace="base :: footer"></th:block>
+<th:block th:replace="base :: javascript"></th:block>
+</body>
+</html>
