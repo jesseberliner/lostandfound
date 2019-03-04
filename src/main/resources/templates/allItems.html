@@ -8,24 +8,24 @@
 <th:block th:replace="base :: nav"></th:block>
 
 <div class="container">
-    <th:block th:each="item:${allItems}">
         <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
+            <th:block th:each="item:${allItems}">
+                <div class="card">
                 <a th:href="@{/detail/{id}(id=${item.getItemId()})}"><img class="card-img-top" th:src="${item.itemPicture1}" alt=""></a><img class="card-img-top" th:src="${item.itemPicture1}" alt=""></a>
                 <div th:remove="tag" th:utext="${item.itemPicture1}"></div>
                 <div class="card-body">
                     <h4 class="card-title">
-                        <a href="#">Item One</a>
+                        <a th:href="@{/detail/{id}(id=${item.getItemId()})}" th:text="${item.itemName}"></a>
                     </h4>
-                    <h5></h5>
+                    <h5 th:text="'Found at ' + ${item.itemFoundLocation} +' on ' + ${item.itemFoundDate}"></h5>
                     <p class="card-text" th:text="*{item.itemDescription}"></p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted"></small>
+                    <small class="text-muted" th:text="'Item location: ' +${item.itemLocation}"></small>
                 </div>
             </div>
+            </th:block>
         </div>
-    </th:block>
 
 </div>
 <th:block th:replace="base :: footer"></th:block>
