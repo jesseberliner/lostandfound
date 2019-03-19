@@ -46,17 +46,24 @@ public class CloudinaryConfig
     {
         //Creates a transformation from the URL provided
         //return cloudinary.url().transformation(new Transformation().width(width).height(height)).toString();
-        System.out.println(url);
-        System.out.println(cloudinary.url());
-        System.out.println(cloudinary.url().toString());
-        System.out.println(cloudinary.url().transformation());
-        System.out.println(cloudinary.url().transformation().toString());
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)));
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).toString());
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).type("fetch"));
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).type("fetch").toString());
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).generate(url));
+
         return cloudinary.url().transformation(new Transformation().width(width).height(height)).generate(url);
 
     }
+    public String createUrl(String name) {
+        //This method generates the URL for the actor's list
+        //return cloudinary.url().transformation(new Transformation().width(100).height(100).crop("fill").radius(50).gravity("face")
+        return cloudinary.url().transformation(new Transformation().effect("blackwhite").height(100).radius(25).width(100).crop("scale")).generate(name);
+
+
+    }
+
+    public String createUrl(String name, int width, int height) {
+        //This method generates the URL for an image whose name is known and has been provided
+        return cloudinary.url().transformation(new Transformation().width(width).height(height).crop("fill").radius(50).gravity("face")
+        ).generate(name);
+
+    }
+
+
 }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<%@taglib uri="https://cloudinary.com/jsp/taglib" prefix="cl" %>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="base :: head"></th:block>
     <title>Lost and found</title>
@@ -18,7 +17,7 @@
         <p class="card-text" th:text="${item.itemDescription}"></p>
     </div>
     <div class="card-footer">
-        <small class="text-muted"></small>
+        <small class="text-muted"><a th:href="@{/delete/{id}(id=${item.getItemId()})}">Delete</a></small>
     </div>
 </div>
 <th:block th:replace="base :: footer"></th:block>

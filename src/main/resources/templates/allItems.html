@@ -11,17 +11,19 @@
     <th:block th:each="item:${allItems}">
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100">
-                <a th:href="@{/detail/{id}(id=${item.getItemId()})}"><img class="card-img-top" th:src="${item.itemPicture1}" alt=""></a><img class="card-img-top" th:src="${item.itemPicture1}" alt=""></a>
-                <div th:remove="tag" th:utext="${item.itemPicture1}"></div>
+                <a th:href="@{/detail/{id}(id=${item.getItemId()})}">
+                    <img class="card-img-top" th:src="${item.itemPicture1}" alt="No picture added"></a>
+                <a><img class="card-img-top" th:src="${item.itemPicture2}" alt=""></a>
+                </a>
+                <!--<div th:remove="tag" th:utext="${item.itemPicture1}"></div>-->
                 <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Item One</a>
+                    <h4 class="card-title" th:text="${item.itemName}">
                     </h4>
                     <h5></h5>
                     <p class="card-text" th:text="*{item.itemDescription}"></p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted"></small>
+                    <small class="text-muted" th:text="'Date found:' + ${item.itemFoundDate}"></small>
                 </div>
             </div>
         </div>

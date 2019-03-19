@@ -1,9 +1,7 @@
 package com.erickson.lostandfound.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -33,6 +31,8 @@ public class Item
 
     private boolean itemIsDeleted;
 
+    @ManyToMany(mappedBy = "items", fetch = FetchType.LAZY)
+    private Collection<User> users;
 
     public Item()
     {

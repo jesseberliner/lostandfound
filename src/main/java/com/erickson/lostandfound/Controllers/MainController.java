@@ -3,9 +3,13 @@ package com.erickson.lostandfound.Controllers;
 import com.cloudinary.*;
 import com.cloudinary.utils.ObjectUtils;
 import com.erickson.lostandfound.Models.Item;
+import com.erickson.lostandfound.Models.User;
 import com.erickson.lostandfound.Repositories.ItemRepository;
 import com.erickson.lostandfound.Services.CloudinaryConfig;
+import com.erickson.lostandfound.Services.CustomUserDetails;
+import com.erickson.lostandfound.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +20,7 @@ import org.springframework.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Map;
 
 @Controller
@@ -24,6 +29,9 @@ public class MainController
 
     @Autowired
     ItemRepository itemRepo;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     CloudinaryConfig cloudc;
@@ -35,10 +43,22 @@ public class MainController
         return "index";
     }
 
+
+
+
+
+    @RequestMapping("/secure")
+    public String secure(Principal principal, Model model){
+        User myuser = ((CustomUserDetails)((UsernamePasswordAuthenticationToken)principal).getPrincipal()).getUser();
+        model.addAttribute("myuser", myuser);
+        return "secure";
+    }
+
     @RequestMapping({"/allItems"})
-    public String allItems(Model model)
+    public String allItems(Principal principal, Model model)
     {
-        System.out.println("all");
+        User myuser = ((CustomUserDetails)((UsernamePasswordAuthenticationToken)principal).getPrincipal()).getUser();
+        model.addAttribute("myuser", myuser);
         model.addAttribute("allItems", itemRepo.findAll());
         return "allItems";
     }
@@ -51,24 +71,27 @@ public class MainController
     }
 
     @PostMapping({"/addItem"})
-//    public String addedItem(@Valid @ModelAttribute("newItem")Item item,
-//                            @RequestParam("file") MultipartFile file, BindingResult result)
+//    public String addedItem(@Valid @ModelAttribute("item")Item item, BindingResult result,
+//                            @RequestParam("file") MultipartFile file)
     public String addedItem(@ModelAttribute("item")Item item, @RequestParam("file")MultipartFile file)
     {
         if(file.isEmpty())
         {
-            //model.addAttribute("dish", dish);
             return "redirect:/add";
         }
         try {
             Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
 
 
-            String name = uploadResult.get("public_id").toString();
-            String test = cloudc.createSmallImage(uploadResult.get("url").toString(), 120, 120);
+            //String name = uploadResult.get("public_id").toString();
+            String newName = uploadResult.get("url").toString();
+            String test = cloudc.createUrl(uploadResult.get("url").toString());
             System.out.println("test:" +test);
 
-            item.setItemPicture1(uploadResult.get("url").toString());
+
+
+            //item.setItemPicture1(uploadResult.get("url").toString());
+            item.setItemPicture1(test);
             itemRepo.save(item);
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,6 +120,7 @@ public class MainController
     {
         Item item = itemRepo.findById(id).get();
         item.setItemIsDeleted(true);
+        itemRepo.save(item);
         return "redirect:/allItems";
     }
 }
