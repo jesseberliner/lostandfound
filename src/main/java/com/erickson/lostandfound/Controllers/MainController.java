@@ -21,6 +21,7 @@ import org.springframework.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Date;
 import java.util.Map;
 
 @Controller
@@ -61,8 +62,7 @@ public class MainController
     }
 
     @PostMapping({"/addItem"})
-//    public String addedItem(@Valid @ModelAttribute("item")Item item, BindingResult result,
-//                            @RequestParam("file") MultipartFile file)
+//    public String addedItem(@Valid @ModelAttribute("item")Item item, BindingResult result, @RequestParam("file") MultipartFile file)
     public String addedItem(@ModelAttribute("item")Item item, @RequestParam("file")MultipartFile file, @RequestParam("file2")MultipartFile file2)
     {
         if(file.isEmpty())
@@ -70,9 +70,8 @@ public class MainController
             return "redirect:/add";
         }
         try {
-
-
             /*
+            Image work
             public_id returns just the name of the image as an object
             url returns the entire url as an object
             */
@@ -80,15 +79,28 @@ public class MainController
             String transformedImage = cloudc.createUrl(uploadResult.get("public_id").toString());
             item.setItemPicture1(transformedImage);
 
-            Map uploadResult2 = cloudc.upload(file2.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
-            String transformedImage2 = cloudc.createUrl(uploadResult2.get("public_id").toString());
-            item.setItemPicture2(transformedImage2);
-
-            itemRepo.save(item);
         } catch (IOException e) {
             e.printStackTrace();
             return "redirect:/add";
         }
+
+        //Second picture is optional, so no redirect if the file is missing
+        if(!file2.isEmpty()) {
+            try {
+                Map uploadResult2 = cloudc.upload(file2.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+                String transformedImage2 = cloudc.createUrl(uploadResult2.get("public_id").toString());
+                item.setItemPicture2(uploadResult2.get("public_id").toString());
+                System.out.println(uploadResult2.get("public_id").toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        User user = userService.getUser();
+        item.setItemAddedBy(user);
+        itemRepo.save(item);
+
+
         return "addedItem";
     }
 
@@ -112,7 +124,29 @@ public class MainController
     {
         Item item = itemRepo.findById(id).get();
         item.setItemIsDeleted(true);
+        item.setItemClaimedDeletedDate(new Date());
         itemRepo.save(item);
         return "redirect:/allItems";
+    }
+
+    @GetMapping("/claim/{id}")
+    public String claimItem(@PathVariable("id") long id, Model model)
+    {
+        Item item = itemRepo.findById(id).get();
+        model.addAttribute(item);
+
+        return "claim";
+    }
+
+    @PostMapping("/claim")
+    public String processClaimItem(@ModelAttribute("item")Item item)
+    {
+        item.setItemIsDeleted(true);
+        item.setItemIsClaimed(true);
+        item.setItemClaimedDeletedDate(new Date());
+        item.setItemClaimedThrough(userService.getUser().getUsername());
+        itemRepo.save(item);
+
+        return "allItems";
     }
 }

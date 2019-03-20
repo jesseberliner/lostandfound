@@ -6,19 +6,17 @@
 </head>
 <body>
 <th:block th:replace="base :: nav"></th:block>
-<div class="card h-100">
-    <img class="card-img-top" th:src="*{item.itemPicture1}" alt="No image found"> <img class="card-img-top" th:src="*{item.itemPicture2}" alt="No image found">
+<div class="container">
+    <h5 th:text="${item.itemName}"></h5>
+    <h5 th:text="'Found ' + ${item.itemFoundDate}"></h5>
+    <p th:text="${item.itemDescription}"></p>
+    <img class="card-img-top" th:src="*{item.itemPicture1}" alt="No image found">
+    <img class="card-img-top" th:src="'http://res.cloudinary.com/teca/image/upload/c_fit,g_center,w_250/' + *{item.itemPicture2} +'.jpg'" alt="No image found">
 
-    <div class="card-body">
-        <h4 class="card-title">
-            <a href="#"></a>
-        </h4>
-        <h5 th:text="'Found ' + ${item.itemFoundDate}"></h5>
-        <p class="card-text" th:text="${item.itemDescription}"></p>
-    </div>
-    <div class="card-footer">
-        <small class="text-muted"><a th:href="@{/delete/{id}(id=${item.getItemId()})}">Delete</a></small>
-    </div>
+    <h5 th:text="'Added by: ' + ${item.itemAddedBy.firstName}"></h5>
+
+    <p class="text-muted"><a th:href="@{/delete/{id}(id=${item.getItemId()})}">Delete</a></p>
+    <p class="text-muted"><a th:href="@{/claim/{id}(id=${item.getItemId()})}">Claim</a></p>
 </div>
 <th:block th:replace="base :: footer"></th:block>
 <th:block th:replace="base :: javascript"></th:block>
