@@ -39,27 +39,17 @@ public class MainController
     @RequestMapping({"/index","/"})
     public String welcomePage()
     {
-        System.out.println("index");
         return "index";
     }
 
 
-
-
-
-    @RequestMapping("/secure")
-    public String secure(Principal principal, Model model){
-        User myuser = ((CustomUserDetails)((UsernamePasswordAuthenticationToken)principal).getPrincipal()).getUser();
-        model.addAttribute("myuser", myuser);
-        return "secure";
-    }
 
     @RequestMapping({"/allItems"})
     public String allItems(Principal principal, Model model)
     {
         User myuser = ((CustomUserDetails)((UsernamePasswordAuthenticationToken)principal).getPrincipal()).getUser();
         model.addAttribute("myuser", myuser);
-        model.addAttribute("allItems", itemRepo.findAll());
+        model.addAttribute("allItems", itemRepo.findAllByItemIsDeletedIsFalse());
         return "allItems";
     }
 
@@ -73,25 +63,27 @@ public class MainController
     @PostMapping({"/addItem"})
 //    public String addedItem(@Valid @ModelAttribute("item")Item item, BindingResult result,
 //                            @RequestParam("file") MultipartFile file)
-    public String addedItem(@ModelAttribute("item")Item item, @RequestParam("file")MultipartFile file)
+    public String addedItem(@ModelAttribute("item")Item item, @RequestParam("file")MultipartFile file, @RequestParam("file2")MultipartFile file2)
     {
         if(file.isEmpty())
         {
             return "redirect:/add";
         }
         try {
+
+
+            /*
+            public_id returns just the name of the image as an object
+            url returns the entire url as an object
+            */
             Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+            String transformedImage = cloudc.createUrl(uploadResult.get("public_id").toString());
+            item.setItemPicture1(transformedImage);
 
+            Map uploadResult2 = cloudc.upload(file2.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+            String transformedImage2 = cloudc.createUrl(uploadResult2.get("public_id").toString());
+            item.setItemPicture2(transformedImage2);
 
-            //String name = uploadResult.get("public_id").toString();
-            String newName = uploadResult.get("url").toString();
-            String test = cloudc.createUrl(uploadResult.get("url").toString());
-            System.out.println("test:" +test);
-
-
-
-            //item.setItemPicture1(uploadResult.get("url").toString());
-            item.setItemPicture1(test);
             itemRepo.save(item);
         } catch (IOException e) {
             e.printStackTrace();

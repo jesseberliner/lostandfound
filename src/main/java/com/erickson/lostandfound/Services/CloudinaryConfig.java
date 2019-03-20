@@ -51,10 +51,10 @@ public class CloudinaryConfig
 
     }
     public String createUrl(String name) {
-        //This method generates the URL for the actor's list
-        //return cloudinary.url().transformation(new Transformation().width(100).height(100).crop("fill").radius(50).gravity("face")
-        return cloudinary.url().transformation(new Transformation().effect("blackwhite").height(100).radius(25).width(100).crop("scale")).generate(name);
-
+/*
+.generate(name) returns a url while .imageTag(name) returns an html image tag
+ */
+        return cloudinary.url().transformation(new Transformation().gravity("center").height(500).width(500).crop("crop")).generate(name);
 
     }
 
