@@ -1,23 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="base :: head"></th:block>
     <title>Lost and found</title>
 </head>
 <body>
 <th:block th:replace="base :: nav"></th:block>
-<div class="card h-100">
-    <img class="card-img-top" th:src="*{item.itemPicture1}" alt="No image found"> <img class="card-img-top" th:src="*{item.itemPicture2}" alt="No image found">
+<div class="container">
+    <h5 th:text="${item.itemName}"></h5>
+    <h5 th:text="'Found ' + ${item.itemFoundDate}"></h5>
+    <p th:text="${item.itemDescription}"></p>
+    <img class="card-img-top" th:src="*{item.itemPicture1}" alt="No image found">
+    <img class="card-img-top" th:src="'http://res.cloudinary.com/teca/image/upload/c_fit,g_center,w_250/' + *{item.itemPicture2} +'.jpg'" alt="No image found">
 
-    <div class="card-body">
-        <h4 class="card-title">
-            <a href="#"></a>
-        </h4>
-        <h5 th:text="'Found ' + ${item.itemFoundDate}"></h5>
-        <p class="card-text" th:text="${item.itemDescription}"></p>
-    </div>
-    <div class="card-footer">
-        <small class="text-muted"></small>
+    <h5 th:text="'Added by: ' + ${item.itemAddedBy.firstName}"></h5>
+
+    <p class="text-muted"><a th:href="@{/delete/{id}(id=${item.getItemId()})}">Delete</a></p>
+    <p class="text-muted"><a th:href="@{/claim/{id}(id=${item.getItemId()})}">Claim</a></p>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Claim</button>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Claim item</h4>
+                    <button type="button" class="close" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/claim}" th:object="${item}" method="POST">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" th:field="*{itemName}" id="name" placeholder="Name" autofocus="autofocus"/>
+                        <!--<span th:if="${#fields.hasErrors('itemTitle')}" th:errors="*{itemName}"></span>-->
+                        <button type="submit" class="btn btn-primary">Submit</button>  <button type="reset" class="btn btn-primary">Reset</button>
+                        <br/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 <th:block th:replace="base :: footer"></th:block>
