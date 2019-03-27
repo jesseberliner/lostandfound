@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add an item</title>
+
+    <th:block th:replace="base :: head"></th:block>
+</head>
+<body>
+<th:block th:replace="base :: nav"></th:block>
+<div class="container">
+    <div class="row col-sm justify-content-center">
+        <form action="#" th:action="@{/claim}" th:object="${item}" method="POST">
+            <input type="hidden" th:field="*{itemId}"/>
+            <h1>Mark an item as claimed</h1>
+
+            <h5 th:text="${item.itemName}"></h5>
+
+            <label for="itemClaimedBy">Who claimed the item?</label>
+            <input type="text" class="form-control" th:field="*{itemClaimedBy}" id="itemClaimedBy" placeholder="Jane Smith"/>
+            <!--<span th:if="${#fields.hasErrors('itemDesc')}" th:errors="*{itemDescription}"></span>-->
+            <br/>
+
+            <button type="submit" class="btn btn-primary">Submit</button>  <button type="reset" class="btn btn-primary">Reset</button>
+        </form>
+    </div>
+</div>
+<th:block th:replace="base :: footer"></th:block>
+
+<th:block th:replace="base :: javascript"></th:block>
+</body>
+</html>

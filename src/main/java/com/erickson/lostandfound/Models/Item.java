@@ -1,9 +1,9 @@
 package com.erickson.lostandfound.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.erickson.lostandfound.Services.UserService;
+
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -33,6 +33,12 @@ public class Item
 
     private boolean itemIsDeleted;
 
+    private String itemClaimedBy;
+
+    private String itemClaimedThrough;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User itemAddedBy;
 
     public Item()
     {
@@ -149,5 +155,29 @@ public class Item
     public void setItemIsDeleted(boolean itemIsDeleted)
     {
         this.itemIsDeleted = itemIsDeleted;
+    }
+
+    public User getItemAddedBy() {
+        return itemAddedBy;
+    }
+
+    public void setItemAddedBy(User itemAddedBy) {
+        this.itemAddedBy = itemAddedBy;
+    }
+
+    public String getItemClaimedBy() {
+        return itemClaimedBy;
+    }
+
+    public void setItemClaimedBy(String itemClaimedBy) {
+        this.itemClaimedBy = itemClaimedBy;
+    }
+
+    public String getItemClaimedThrough() {
+        return itemClaimedThrough;
+    }
+
+    public void setItemClaimedThrough(String itemClaimedThrough) {
+        this.itemClaimedThrough = itemClaimedThrough;
     }
 }

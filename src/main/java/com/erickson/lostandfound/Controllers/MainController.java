@@ -3,9 +3,13 @@ package com.erickson.lostandfound.Controllers;
 import com.cloudinary.*;
 import com.cloudinary.utils.ObjectUtils;
 import com.erickson.lostandfound.Models.Item;
+import com.erickson.lostandfound.Models.User;
 import com.erickson.lostandfound.Repositories.ItemRepository;
 import com.erickson.lostandfound.Services.CloudinaryConfig;
+import com.erickson.lostandfound.Services.CustomUserDetails;
+import com.erickson.lostandfound.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +20,8 @@ import org.springframework.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Date;
 import java.util.Map;
 
 @Controller
@@ -26,20 +32,25 @@ public class MainController
     ItemRepository itemRepo;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     CloudinaryConfig cloudc;
 
     @RequestMapping({"/index","/"})
     public String welcomePage()
     {
-        System.out.println("index");
         return "index";
     }
 
+
+
     @RequestMapping({"/allItems"})
-    public String allItems(Model model)
+    public String allItems(Principal principal, Model model)
     {
-        System.out.println("all");
-        model.addAttribute("allItems", itemRepo.findAll());
+        User myuser = ((CustomUserDetails)((UsernamePasswordAuthenticationToken)principal).getPrincipal()).getUser();
+        model.addAttribute("myuser", myuser);
+        model.addAttribute("allItems", itemRepo.findAllByItemIsDeletedIsFalse());
         return "allItems";
     }
 
@@ -51,29 +62,45 @@ public class MainController
     }
 
     @PostMapping({"/addItem"})
-//    public String addedItem(@Valid @ModelAttribute("newItem")Item item,
-//                            @RequestParam("file") MultipartFile file, BindingResult result)
-    public String addedItem(@ModelAttribute("item")Item item, @RequestParam("file")MultipartFile file)
+//    public String addedItem(@Valid @ModelAttribute("item")Item item, BindingResult result, @RequestParam("file") MultipartFile file)
+    public String addedItem(@ModelAttribute("item")Item item, @RequestParam("file")MultipartFile file, @RequestParam("file2")MultipartFile file2)
     {
         if(file.isEmpty())
         {
-            //model.addAttribute("dish", dish);
             return "redirect:/add";
         }
         try {
+            /*
+            Image work
+            public_id returns just the name of the image as an object
+            url returns the entire url as an object
+            */
             Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+            String transformedImage = cloudc.createUrl(uploadResult.get("public_id").toString());
+            item.setItemPicture1(transformedImage);
 
-
-            String name = uploadResult.get("public_id").toString();
-            String test = cloudc.createSmallImage(uploadResult.get("url").toString(), 120, 120);
-            System.out.println("test:" +test);
-
-            item.setItemPicture1(uploadResult.get("url").toString());
-            itemRepo.save(item);
         } catch (IOException e) {
             e.printStackTrace();
             return "redirect:/add";
         }
+
+        //Second picture is optional, so no redirect if the file is missing
+        if(!file2.isEmpty()) {
+            try {
+                Map uploadResult2 = cloudc.upload(file2.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
+                String transformedImage2 = cloudc.createUrl(uploadResult2.get("public_id").toString());
+                item.setItemPicture2(uploadResult2.get("public_id").toString());
+                System.out.println(uploadResult2.get("public_id").toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        User user = userService.getUser();
+        item.setItemAddedBy(user);
+        itemRepo.save(item);
+
+
         return "addedItem";
     }
 
@@ -97,6 +124,29 @@ public class MainController
     {
         Item item = itemRepo.findById(id).get();
         item.setItemIsDeleted(true);
+        item.setItemClaimedDeletedDate(new Date());
+        itemRepo.save(item);
         return "redirect:/allItems";
+    }
+
+    @GetMapping("/claim/{id}")
+    public String claimItem(@PathVariable("id") long id, Model model)
+    {
+        Item item = itemRepo.findById(id).get();
+        model.addAttribute(item);
+
+        return "claim";
+    }
+
+    @PostMapping("/claim")
+    public String processClaimItem(@ModelAttribute("item")Item item)
+    {
+        item.setItemIsDeleted(true);
+        item.setItemIsClaimed(true);
+        item.setItemClaimedDeletedDate(new Date());
+        item.setItemClaimedThrough(userService.getUser().getUsername());
+        itemRepo.save(item);
+
+        return "allItems";
     }
 }

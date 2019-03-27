@@ -46,17 +46,24 @@ public class CloudinaryConfig
     {
         //Creates a transformation from the URL provided
         //return cloudinary.url().transformation(new Transformation().width(width).height(height)).toString();
-        System.out.println(url);
-        System.out.println(cloudinary.url());
-        System.out.println(cloudinary.url().toString());
-        System.out.println(cloudinary.url().transformation());
-        System.out.println(cloudinary.url().transformation().toString());
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)));
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).toString());
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).type("fetch"));
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).type("fetch").toString());
-        System.out.println(cloudinary.url().transformation(new Transformation().width(100)).generate(url));
+
         return cloudinary.url().transformation(new Transformation().width(width).height(height)).generate(url);
 
     }
+    public String createUrl(String name) {
+/*
+.generate(name) returns a url while .imageTag(name) returns an html image tag
+ */
+        return cloudinary.url().transformation(new Transformation().gravity("center").height(500).width(500).crop("crop")).generate(name);
+
+    }
+
+    public String createUrl(String name, int width, int height) {
+        //This method generates the URL for an image whose name is known and has been provided
+        return cloudinary.url().transformation(new Transformation().width(width).height(height).crop("fill").radius(50).gravity("face")
+        ).generate(name);
+
+    }
+
+
 }
