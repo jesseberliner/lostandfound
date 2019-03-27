@@ -17,6 +17,32 @@
 
     <p class="text-muted"><a th:href="@{/delete/{id}(id=${item.getItemId()})}">Delete</a></p>
     <p class="text-muted"><a th:href="@{/claim/{id}(id=${item.getItemId()})}">Claim</a></p>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Claim</button>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Claim item</h4>
+                    <button type="button" class="close" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/claim}" th:object="${item}" method="POST">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" th:field="*{itemName}" id="name" placeholder="Name" autofocus="autofocus"/>
+                        <!--<span th:if="${#fields.hasErrors('itemTitle')}" th:errors="*{itemName}"></span>-->
+                        <button type="submit" class="btn btn-primary">Submit</button>  <button type="reset" class="btn btn-primary">Reset</button>
+                        <br/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 <th:block th:replace="base :: footer"></th:block>
 <th:block th:replace="base :: javascript"></th:block>

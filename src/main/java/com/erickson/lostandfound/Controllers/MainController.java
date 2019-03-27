@@ -141,6 +141,7 @@ public class MainController
     @PostMapping("/claim")
     public String processClaimItem(@ModelAttribute("item")Item item)
     {
+        System.out.println("Claimed");
         item.setItemIsDeleted(true);
         item.setItemIsClaimed(true);
         item.setItemClaimedDeletedDate(new Date());
